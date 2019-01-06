@@ -15,9 +15,7 @@ class RBM:
         tf.reset_default_graph()
         self.rbm = xrbm.models.RBM(num_vis=num_vis, num_hid=num_hid, name='denoise_rbm')
 
-        samples = trainX.shape[0]
-
-        self.features_placeholder = tf.placeholder(tf.float32, shape=(samples, window))
+        self.features_placeholder = tf.placeholder(tf.float32, shape=(None, window))
 
         cdapproximator = xrbm.train.CDApproximator(learning_rate=learning_rate)
         self.train_op = cdapproximator.train(self.rbm, vis_data=self.features_placeholder)
