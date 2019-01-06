@@ -2,6 +2,9 @@ import tensorflow as tf
 from functools import partial
 
 class AutoEncoder:
+
+    
+
     def __init__(self, n_inputs, training_set):
         n_hidden1 = n_inputs / 2
         n_hidden2 = n_inputs / 4

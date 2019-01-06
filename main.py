@@ -1,51 +1,39 @@
 import os
 import sys
 import numpy as np
-import soundfile as sf
-from sklearn.neural_network import BernoulliRBM
 
-samples = 10
-window = 100
-white_noise = 0.05
+from rbm import *
+from datareader import *
 
-path = "F:\\all\\"
+samples = 200
+window = 10000
+
+path = "C:\\all\\"
+#path = "Stasiu, ustaw sobie - potem będzie łatwo sobie nazwajem odkomentowywać"
 
 def main(argv):
     trainPath = os.path.normpath(path + "\\audio_train\\")
     testPath = os.path.normpath(path + "\\audio_test\\")
 
-    trainFiles = os.listdir(trainPath)[:samples]
-    testFiles = os.listdir(testPath)[:samples]
+    trainFiles = os.listdir(trainPath)
+    testFiles = os.listdir(testPath)
 
-    rbm = BernoulliRBM()
+    trainX, trainY, testX, testY, samplerate, testsampleinfo = read_data(trainFiles, trainPath, testFiles, testPath, window, samples)
+    
+    trainX = np.asarray(trainX)
+    trainY = np.asarray(trainY)
+    testX = np.asarray(testX)
 
-    for sample in trainFiles:
-        data, samplerate = sf.read(trainPath + "\\" + sample)
-        noise = np.random.normal(0, white_noise, data.size)
-        signal = data + noise
+    rbm = RBM(window, trainX)
+    patern = rbm.test(testX)
 
-        sf.write(sample.replace(".wav", "_noise.wav"), signal, samplerate)
+    noise = patern[0][1]
 
-        for i in range(0, len(sample), window): 
-            X = signal[i:i + window].reshape(1,-1)
-            Y = data[i:i + window].reshape(1,-1)
-            rbm.partial_fit(X,Y)
+    denoised = denoise(testX, noise)
 
-    for sample in testFiles:
-        data, samplerate = sf.read(testPath + "\\" + sample)
-        noise = np.random.normal(0, white_noise, data.size)
-        signal = data + noise
+    merged = merge_samples(denoised, testsampleinfo, samples, samplerate)
 
-        sf.write(sample.replace(".wav", "_test_noise.wav"), signal, samplerate)
-
-        outputSignal = []
-
-        for i in range(0, len(sample), window): 
-            X = signal[i:i + window].reshape(1,-1)
-            output = rbm.score_samples(X)
-            outputSignal.append(output)
-
-        sf.write(sample.replace(".wav", "_test_denoised.wav"), outputSignal, samplerate)  
+    a=1
 
 if (__name__ == "__main__"):
     main(sys.argv[1:])
