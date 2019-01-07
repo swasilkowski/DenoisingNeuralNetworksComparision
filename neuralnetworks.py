@@ -1,10 +1,9 @@
 import tensorflow as tf
+
 from functools import partial
 
+
 class AutoEncoder:
-
-    
-
     def __init__(self, n_inputs, training_set):
         n_hidden1 = n_inputs / 2
         n_hidden2 = n_inputs / 4
@@ -49,3 +48,4 @@ class AutoEncoder:
         with tf.Session() as sess:
             self.saver.restore(sess, "./autoencoder_model.ckpt")
             output_val = self.outputs.eval(feed_dict={self.X: test_set})
+            return output_val

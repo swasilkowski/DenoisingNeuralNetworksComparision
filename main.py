@@ -4,12 +4,12 @@ import numpy as np
 
 from rbm import *
 from datareader import *
+from neuralnetworks import *
 
 samples = 200
 window = 10000
 
 path = "C:\\all\\"
-#path = "Stasiu, ustaw sobie - potem będzie łatwo sobie nazwajem odkomentowywać"
 
 def main(argv):
     trainPath = os.path.normpath(path + "\\audio_train\\")
@@ -24,8 +24,11 @@ def main(argv):
     trainY = np.asarray(trainY)
     testX = np.asarray(testX)
 
-    rbm = RBM(window, trainX)
-    patern = rbm.test(testX)
+    #rbm = RBM(window, trainX)
+    #patern = rbm.test(testX)
+
+    autoencoder = AutoEncoder(window, trainX)
+    patern = autoencoder.test(testX)
 
     noise = patern[0][1]
 
