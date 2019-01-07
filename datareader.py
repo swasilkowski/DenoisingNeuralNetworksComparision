@@ -63,18 +63,17 @@ def denoise(samples, noise):
 
 def merge_samples(samples, sampleinfo, samplerate):
     filename = sampleinfo[0]
-    outputSignal = samples[0]
+    outputSignal = samples[0].tolist()
     signals = []
     for indx, sample in enumerate(samples):
         if(indx == 0): 
             continue
         if(filename == sampleinfo[indx]):
-            #outputSignal.append(sample.tolist())
-            np.append(outputSignal, sample)
+            outputSignal.extend(sample.tolist())
         else:
             sf.write("samples\\" + sampleinfo[indx-1].replace(".wav", "_test_denoised.wav"), outputSignal, samplerate)
             signals.append(outputSignal)
             filename = sampleinfo[indx]
-            outputSignal = sample
+            outputSignal = sample.tolist()
 
     return signals
