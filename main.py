@@ -31,7 +31,7 @@ def main(argv):
 
     denoised = denoise(testX, noise)
 
-    merged = merge_samples(denoised, testsampleinfo, samples, samplerate)
+    merged = merge_samples(denoised, testsampleinfo, samplerate)
 
     a=1
 
