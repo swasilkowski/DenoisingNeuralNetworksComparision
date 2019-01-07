@@ -33,7 +33,5 @@ def main(argv):
 
     merged = merge_samples(denoised, testsampleinfo, samplerate)
 
-    a=1
-
 if (__name__ == "__main__"):
     main(sys.argv[1:])
