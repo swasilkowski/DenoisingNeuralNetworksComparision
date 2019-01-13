@@ -27,14 +27,14 @@ def main(argv):
     #rbm = RBM(window, trainX)
     #patern = rbm.test(testX)
 
-    autoencoder = AutoEncoder(window, trainX)
-    patern = autoencoder.test(testX)
+    #autoencoder = AutoEncoder(window, trainX, trainY)
+    #test_output = autoencoder.test(testX)
 
-    noise = patern[0][1]
+    # noise = patern[0][1]
 
-    denoised = denoise(testX, noise)
+    # denoised = denoise(testX, noise)
 
-    merged = merge_samples(denoised, testsampleinfo, samplerate)
+    merged = merge_samples(testX, testsampleinfo, samplerate)
 
 if (__name__ == "__main__"):
     main(sys.argv[1:])

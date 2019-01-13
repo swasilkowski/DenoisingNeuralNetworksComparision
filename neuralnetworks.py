@@ -4,7 +4,7 @@ from functools import partial
 
 
 class AutoEncoder:
-    def __init__(self, n_inputs, training_set):
+    def __init__(self, n_inputs, training_set_X=None, training_set_Y=None):
         n_hidden1 = n_inputs / 2
         n_hidden2 = n_inputs / 4
         n_hidden3 = n_hidden1
@@ -14,6 +14,7 @@ class AutoEncoder:
         l2_reg = 0.0001
 
         self.X = tf.placeholder(tf.float32, shape=[None, n_inputs])
+        self.Y = tf.placeholder(tf.float32, shape=[None, n_outputs])
 
         he_init = tf.contrib.layers.variance_scaling_initializer()
         l2_regularizer = tf.contrib.layers.l2_regularizer(l2_reg)
@@ -24,7 +25,7 @@ class AutoEncoder:
         hidden3 = my_dense_layer(hidden2, n_hidden3)
         self.outputs = tf.layers.dense(hidden3, n_outputs, activation=None, kernel_initializer=he_init, kernel_regularizer=l2_regularizer)
 
-        reconstruction_loss = tf.reduce_mean(tf.square(self.outputs - self.X))
+        reconstruction_loss = tf.reduce_mean(tf.square(self.outputs - self.Y))
 
         reg_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
         loss = tf.add_n([reconstruction_loss] + reg_losses)
@@ -37,11 +38,13 @@ class AutoEncoder:
 
         n_epochs = 5
 
-        with tf.Session() as sess:
-            init.run()
-            for epoch in range(n_epochs):
-                sess.run(training_op, feed_dict={self.X: training_set})
-            save_path = self.saver.save(sess, "./autoencoder_model.ckpt")
+        if(training_set_X.any()):
+            with tf.Session() as sess:
+                init.run()
+                for epoch in range(n_epochs):
+                    sess.run(training_op, feed_dict={self.X: training_set_X, self.Y: training_set_Y})
+                    
+                save_path = self.saver.save(sess, "./autoencoder_model.ckpt")
 
 
     def test(self, test_set):
