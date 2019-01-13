@@ -1,13 +1,14 @@
 import numpy as np
 import soundfile as sf
+import os.path
 
 white_noise = 0.05
 save_files = True
 np.random.seed(0)
 
-def read_data(trainFiles, trainPath, testFiles, testPath, window, samples_no):
-    trainX, trainY, samplerate = read_train_data(trainFiles, trainPath, window, samples_no)
-    testX, testY, testsampleinfo = read_test_data(testFiles, testPath, window, samples_no)
+def read_data(trainFiles, trainPath, testFiles, testPath, window, train_samples, test_samples):
+    trainX, trainY, samplerate = read_train_data(trainFiles, trainPath, window, train_samples)
+    testX, testY, testsampleinfo = read_test_data(testFiles, testPath, window, test_samples)
 
     return (trainX, trainY, testX, testY, samplerate, testsampleinfo)
 
@@ -18,11 +19,11 @@ def read_train_data(trainFiles, trainPath, window, samples_no):
 
     for sample in trainFiles:
         data, samplerate = sf.read(trainPath + "\\" + sample)
-        noise = np.random.normal(0, white_noise, data.size)
-        signal = data + noise
+        #noise = np.random.normal(0, white_noise, data.size)
+        signal = data# + noise
 
-        if(save_files):
-            sf.write("samples\\" + sample.replace(".wav", "_noise.wav"), signal, samplerate)
+        #if(save_files):
+        #    sf.write("samples\\" + sample.replace(".wav", "_noise.wav"), signal, samplerate)
 
         for i in range(0, len(signal), window):
             if(i+window < len(signal)):
@@ -40,6 +41,9 @@ def read_test_data(testFiles, testPath, window, samples_no):
 
     for sample in testFiles:
         data, samplerate = sf.read(testPath + "\\" + sample)
+
+        sf.write("samples\\" + sample.replace(".wav", "_test.wav"), data, samplerate)
+
         noise = np.random.normal(0, white_noise, data.size)
         signal = data + noise
 
@@ -77,3 +81,32 @@ def merge_samples(samples, sampleinfo, samplerate):
             outputSignal = sample.tolist()
 
     return signals
+
+def compare_tracks(sampleinfo):
+    tracks = list(set(sampleinfo)) #unique track names
+    track_no = len(tracks)
+
+    value = 0
+
+    for track in tracks:
+        test_track = "samples\\" + track.replace(".wav", "_test_noise.wav")
+        denoised_track = "samples\\" + track.replace(".wav", "_test_denoised.wav")
+
+        if(os.path.exists(test_track) == False or os.path.exists(denoised_track) == False):
+            continue
+
+        noise, sampleinfo =  sf.read(test_track)
+        denoised, sampleinfo =  sf.read(denoised_track)
+
+        noise = noise.tolist()
+        denoised = denoised.tolist()
+
+        for i, val in enumerate(denoised):
+            a = denoised[i]
+            b = noise[i]
+            diff = abs(denoised[i] - noise[i])
+            value += diff
+
+    value = value / track_no
+    print("Mean difference = " + str(value))
+    return value

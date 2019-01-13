@@ -36,13 +36,14 @@ class AutoEncoder:
         init = tf.global_variables_initializer()
         self.saver = tf.train.Saver()
 
-        n_epochs = 5
+        n_epochs = 50
 
         if(training_set_X.any()):
             with tf.Session() as sess:
                 init.run()
                 for epoch in range(n_epochs):
                     sess.run(training_op, feed_dict={self.X: training_set_X, self.Y: training_set_Y})
+                    print("Epoch " + str(epoch) + " done")
                     
                 save_path = self.saver.save(sess, "./autoencoder_model.ckpt")
 
