@@ -89,14 +89,14 @@ def compare_tracks(sampleinfo):
     value = 0
 
     for track in tracks:
-        test_track = "samples\\" + track.replace(".wav", "_test_noise.wav")
+        test_track = "samples\\" + track.replace(".wav", "_test.wav")
         denoised_track = "samples\\" + track.replace(".wav", "_test_denoised.wav")
 
         if(os.path.exists(test_track) == False or os.path.exists(denoised_track) == False):
             continue
 
-        noise, sampleinfo =  sf.read(test_track)
-        denoised, sampleinfo =  sf.read(denoised_track)
+        noise, samplerate =  sf.read(test_track)
+        denoised, samplerate =  sf.read(denoised_track)
 
         noise = noise.tolist()
         denoised = denoised.tolist()
@@ -107,6 +107,6 @@ def compare_tracks(sampleinfo):
             diff = abs(denoised[i] - noise[i])
             value += diff
 
-    value = value / track_no
+    value = value / (len(sampleinfo) * 20000)
     print("Mean difference = " + str(value))
     return value

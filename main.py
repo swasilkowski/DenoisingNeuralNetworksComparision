@@ -7,8 +7,10 @@ from datareader import *
 from neuralnetworks import *
 
 train_samples = 5000
-test_samples = 200
-window = 10000
+test_samples = 100
+window = 20000
+
+runRBM = True
 
 path = "C:\\all\\"
 
@@ -26,17 +28,25 @@ def main(argv):
     trainY = np.asarray(trainY)
     testX = np.asarray(testX)
 
-    #rbm = RBM(window, trainX)
-    #patern = rbm.test(testX)
+    test_output = None
 
-    #autoencoder = AutoEncoder(window, trainX, trainY)
-    #test_output = autoencoder.test(testX)
+    if(runRBM):
 
-    # noise = patern[0][1]
+        rbm = RBM(window, trainX)
 
-    # denoised = denoise(testX, noise)
+        test_output = []
+        for test in testX:
+            output = rbm.test(test.reshape(1,-1))
+            test_output.append(output[0][1])
 
-    #merged = merge_samples(testX, testsampleinfo, samplerate)
+        test_output = np.asarray(test_output)
+
+    if(runRBM == False):
+        autoencoder = AutoEncoder(window, trainX, trainY)
+        test_output = autoencoder.test(testX)
+    
+
+    merged = merge_samples(test_output, testsampleinfo, samplerate)
 
     output = compare_tracks(testsampleinfo)
 
