@@ -4,7 +4,8 @@ from functools import partial
 
 
 class AutoEncoder:
-    def __init__(self, n_inputs, training_set_X=None, training_set_Y=None):
+    def __init__(self, n_inputs, training_set_X=[], training_set_Y=[], batch_size=1, n_epochs=1):
+        n_batches = len(training_set_X)//batch_size
         n_hidden1 = n_inputs / 2
         n_hidden2 = n_inputs / 4
         n_hidden3 = n_hidden1
@@ -36,13 +37,14 @@ class AutoEncoder:
         init = tf.global_variables_initializer()
         self.saver = tf.train.Saver()
 
-        n_epochs = 50
-
         if(training_set_X.any()):
             with tf.Session() as sess:
                 init.run()
                 for epoch in range(n_epochs):
-                    sess.run(training_op, feed_dict={self.X: training_set_X, self.Y: training_set_Y})
+                    for batch_n in range(n_batches):
+                        batch_X = [training_set_X[i] for i in range(batch_n * batch_size, (batch_n + 1) * batch_size - 1)]
+                        batch_Y = [training_set_Y[i] for i in range(batch_n * batch_size, (batch_n + 1) * batch_size - 1)]
+                        sess.run(training_op, feed_dict={self.X: batch_X, self.Y: batch_Y})
                     print("Epoch " + str(epoch) + " done")
                     
                 save_path = self.saver.save(sess, "./autoencoder_model.ckpt")
