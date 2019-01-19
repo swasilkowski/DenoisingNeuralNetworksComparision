@@ -90,7 +90,7 @@ def compare_tracks(sampleinfo):
 
     for track in tracks:
         test_track = "samples\\" + track.replace(".wav", "_test.wav")
-        denoised_track = "samples\\" + track.replace(".wav", "_test_denoised.wav")
+        denoised_track =  "samples\\" + track.replace(".wav", "_test_denoised.wav")
 
         if(os.path.exists(test_track) == False or os.path.exists(denoised_track) == False):
             continue
