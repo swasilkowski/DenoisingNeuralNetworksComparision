@@ -7,11 +7,11 @@ from rbm import *
 from datareader import *
 from neuralnetworks import *
 
-train_samples = 500
-test_samples = 100
-window = 20000
+train_samples = 1000
+test_samples = 300
+window = 10000
 
-runRBM = True
+runRBM = False
 
 path = "C:\\all\\"
 
@@ -52,7 +52,7 @@ def run_case(trainX, testX, trainY, samplerate, testsampleinfo, hid_coef, epochs
         test_output = np.asarray(test_output)
 
     if(runRBM == False):
-        autoencoder = AutoEncoder(window, trainX, trainY)
+        autoencoder = AutoEncoder(window, trainX, trainY, batch_size, epochs)
         test_output = autoencoder.test(testX)
     
 
