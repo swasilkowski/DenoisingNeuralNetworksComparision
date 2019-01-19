@@ -35,7 +35,11 @@ def main(argv):
             trainY = np.asarray(trainY)
             testX = np.asarray(testX)
 
-            run_case(trainX, testX, trainY, train_samples, samplerate, testsampleinfo, 0.5, epoch, 0.01, 1000)
+            #runRBM = True
+            #run_case(trainX, testX, trainY, train_samples, samplerate, testsampleinfo, 0.5, epoch, 0.01, 100)
+
+            runRBM = False
+            run_case(trainX, testX, trainY, train_samples, samplerate, testsampleinfo, 0.5, epoch, 0.01, 100)
 
 
 def run_case(trainX, testX, trainY, train_samples, samplerate, testsampleinfo, hid_coef, epochs, train_rate, batch_size):
@@ -55,8 +59,7 @@ def run_case(trainX, testX, trainY, train_samples, samplerate, testsampleinfo, h
             test_output.append(output[0][1])
 
         test_output = np.asarray(test_output)
-
-    if(runRBM == False):
+    else:
         autoencoder = AutoEncoder(window, trainX, trainY, batch_size, epochs)
         test_output = autoencoder.test(testX)
     
@@ -74,9 +77,16 @@ def run_case(trainX, testX, trainY, train_samples, samplerate, testsampleinfo, h
     if(runRBM):
         param_string = str(window) + "  " + str(train_samples) + "  " + str(test_samples) + "  " + str(hid_coef) + "  " + str(epochs) + "  " + str(train_rate) + "  " + str(batch_size) + "  " + str(mean_error) + "  " + str(run_time)
         print(param_string)
-        with open("outputs.txt", "a") as myfile:
+        with open("outputsRBM.txt", "a") as myfile:
             myfile.write(param_string + "\n")
         os.rename("samples", "samples-rbm-"+str(train_samples) + "tr-" + str(test_samples) + "te-" + str(hid_coef) + "h-" + str(epochs) + "e-" + str(train_rate) + "r-" + str(batch_size)+ 'b')
+        os.makedirs("samples")
+    else:
+        param_string = str(window) + "  " + str(train_samples) + "  " + str(test_samples) + "  " + str(hid_coef) + "  " + str(epochs) + "  " + str(train_rate) + "  " + str(batch_size) + "  " + str(mean_error) + "  " + str(run_time)
+        print(param_string)
+        with open("outputsAE.txt", "a") as myfile:
+            myfile.write(param_string + "\n")
+        os.rename("samples", "samples-ae-"+str(train_samples) + "tr-" + str(test_samples) + "te-" + str(hid_coef) + "h-" + str(epochs) + "e-" + str(train_rate) + "r-" + str(batch_size)+ 'b')
         os.makedirs("samples")
 
 if (__name__ == "__main__"):
