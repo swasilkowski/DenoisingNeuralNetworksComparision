@@ -8,8 +8,8 @@ from datareader import *
 from neuralnetworks import *
 
 train_samples = 1000
-test_samples = 300
-window = 10000
+test_samples = 100
+window = 20000
 
 runRBM = False
 
@@ -25,8 +25,7 @@ def main(argv):
 
     for epoch in [10, 15, 20]:
         for samples in [500, 1000, 2000]:
-            if(epoch == 10 and samples != 2000):
-                continue
+
             train_samples = samples
             trainX, trainY, testX, testY, samplerate, testsampleinfo = read_data(trainFiles, trainPath, testFiles, testPath, window, train_samples, test_samples)
             print("Data ready")
